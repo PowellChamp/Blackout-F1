@@ -52,24 +52,38 @@ module.exports = {
 		  const sheets = google.sheets({version: 'v4', auth});
 		  sheets.spreadsheets.values.get({
 			spreadsheetId: '1Q6FYVvN3cU3pQX_vYFZuJOm2jdFpQR-sDf9aWvnxqwY',
-			range: 'RESULTS!A3:AC',
-			majorDimension: 'COLUMNS',
+			range: 'RESULTS!A3:AC10',
+			// majorDimension: 'COLUMNS',
 		  }, (err, res) => {
 			if (err) return console.log('The API returned an error: ' + err);
 			const rows = res.data.values;
+			var standings = {};
 			if (rows.length) {
+				rows.map((row) => {
+					standings[row[0]] = [row[1], row[28]];
+				});
+
 				const name = interaction.user.tag.split("#");
-				const drivers = rows[0];
-				const points = rows[28];
+				// const drivers = rows[0];
+				// const points = rows[28];
+				var team = []
+				var points = []
+				for (value in Object.values(standings)) {
+					team.push(Object.values(standings)[value][0])
+					points.push(Object.values(standings)[value][1])
+				 };
+				console.log(team);
+				console.log(points);
 				const exampleEmbed = new MessageEmbed()
 					.setColor('#FFC300')
 					.setTitle(`**Championship Standings**`)
 					.setAuthor('Blackout F1 | Season 8', 'https://i.imgur.com/KlHtdK3.jpg', 'https://bit.ly/BlackoutS8')
-					.addField('Drivers', drivers.join("\n"), true)
-					.addField('Points', points.join("\n"), true)
+					.addField('Driver', Object.keys(standings).join('\n'), true)
+					.addField('Team', team.join('\n'), true)
+					.addField('Points', points.join('\n'), true)
 					.setTimestamp()
 					.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
-				
+
 				interaction.reply({ embeds: [exampleEmbed] });
 			} else {
 				interaction.reply('No data found.');

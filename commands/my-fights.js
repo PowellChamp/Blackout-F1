@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const standings = require('./standings');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -52,30 +53,35 @@ module.exports = {
 		  const sheets = google.sheets({version: 'v4', auth});
 		  sheets.spreadsheets.values.get({
 			spreadsheetId: '1Q6FYVvN3cU3pQX_vYFZuJOm2jdFpQR-sDf9aWvnxqwY',
-			range: 'RESULTS!A3:AC',
+			range: 'RESULTS!A3:AC10',
 		  }, (err, res) => {
 			if (err) return console.log('The API returned an error: ' + err);
 			const rows = res.data.values;
+			var standings = {};
 			if (rows.length) {
-				const name = interaction.user.tag.split("#");
+				const name = interaction.user.tag.split("#")[0];
+				var position = 1
 				rows.map((row) => {
-					if (row[0] === name[0]) {
-						const exampleEmbed = new MessageEmbed()
-							.setColor('#FFC300')
-							.setTitle(`**${name[0]}'s Championship Battles**`)
-							.setAuthor('Blackout F1 | Season 8', 'https://i.imgur.com/KlHtdK3.jpg', 'https://bit.ly/BlackoutS8')
-							.addFields(
-								{ name: 'Driver Ahead', value: `${row[2]}` },
-								{ name: 'Total Points', value: `${row[28]}`, inline: true },
-								{ name: 'Driver Behind', value: `${row[2]}` },
-							)
-							.setTimestamp()
-							.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
-						
-						interaction.reply({ embeds: [exampleEmbed] });
-
-					}
+					standings[position] = [row[0], row[1], row[28]];
+					position ++
 				});
+
+				console.log(standings)
+				console.log(name)
+				console.log(Object.keys(standings).find(key => standings[key] === name))
+
+				// const exampleEmbed = new MessageEmbed()
+				// 	.setColor('#FFC300')
+				// 	.setTitle(`**Championship Fights**`)
+				// 	.setAuthor('Blackout F1 | Season 8', 'https://i.imgur.com/KlHtdK3.jpg', 'https://bit.ly/BlackoutS8')
+				// 	.addField('Driver', 'You', true)
+				// 	.addField('Team', Object.keys(standings).find(key => standings[key] === name), true)
+				// 	.addField('Points', standings[name][1], true)
+				// 	.setTimestamp()
+				// 	.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
+
+				// interaction.reply({ embeds: [exampleEmbed] });
+
 			} else {
 				interaction.reply('No data found.');
 			}
