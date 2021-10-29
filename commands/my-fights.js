@@ -68,19 +68,69 @@ module.exports = {
 
 				console.log(standings)
 				console.log(name)
-				console.log(Object.keys(standings).find(key => standings[key] === name))
+				var user_position = 'unknown'
 
-				// const exampleEmbed = new MessageEmbed()
-				// 	.setColor('#FFC300')
-				// 	.setTitle(`**Championship Fights**`)
-				// 	.setAuthor('Blackout F1 | Season 8', 'https://i.imgur.com/KlHtdK3.jpg', 'https://bit.ly/BlackoutS8')
-				// 	.addField('Driver', 'You', true)
-				// 	.addField('Team', Object.keys(standings).find(key => standings[key] === name), true)
-				// 	.addField('Points', standings[name][1], true)
-				// 	.setTimestamp()
-				// 	.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
+				for (key in standings) {
+					if (standings[key][0] === name) {
+						console.log(standings[key][0])
+						user_position = key
+					}
+				}
+				if (user_position > 1) {
+					var ahd_position = user_position - 1
+					console.log(ahd_position)
+				} else {
+					var ahd_position = 'N/A'
+				}
 
-				// interaction.reply({ embeds: [exampleEmbed] });
+				console.log(typeof user_position)
+
+				if (user_position < 8) {
+					var bhnd_position = parseInt(user_position) + 1
+					console.log(bhnd_position)
+				} else {
+					var bhnd_position = 'N/A'
+				}
+
+				var champ_fight_names = []
+				var champ_fight_teams = []
+				var champ_fight_points = []
+
+				if (user_position > 1) {
+				champ_fight_names.push(`>>> ${standings[ahd_position][0]}`);
+				champ_fight_teams.push(`>>> ${standings[ahd_position][1]}`);
+				champ_fight_points.push(`>>> +${parseInt(standings[ahd_position][2]) - parseInt(standings[user_position][2])}`);
+				champ_fight_names.push(`**${standings[user_position][0]}**`);
+				champ_fight_teams.push(`**${standings[user_position][1]}**`);
+				champ_fight_points.push(`**${standings[user_position][2]}**`);
+				} else {
+				champ_fight_names.push(`>>> **${standings[user_position][0]}**`);
+				champ_fight_teams.push(`>>> **${standings[user_position][1]}**`);
+				champ_fight_points.push(`>>> **${standings[user_position][2]}**`);
+				}
+
+				if (user_position < 8) {
+				champ_fight_names.push(standings[bhnd_position][0]);
+				champ_fight_teams.push(standings[bhnd_position][1]);
+				champ_fight_points.push(parseInt(standings[bhnd_position][2]) - parseInt(standings[user_position][2]));
+				}
+
+				console.log(user_position)
+				console.log(champ_fight_names)
+				console.log(champ_fight_points)
+
+				const exampleEmbed = new MessageEmbed()
+					.setColor('#FFC300')
+					.setTitle(`**Your Championship Battle**`)
+					.setAuthor('Blackout F1 | Season 8', 'https://i.imgur.com/KlHtdK3.jpg', 'https://bit.ly/BlackoutS8')
+					.addField('>>> __Driver__', champ_fight_names.join("\n"), true)
+					// .addField('Team', Object.keys(standings).find(key => standings[key] === name), true)
+					.addField('>>> __Team__', champ_fight_teams.join("\n"), true)
+					.addField('>>> __Points__', champ_fight_points.join("\n"), true)
+					.setTimestamp()
+					.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
+
+				interaction.reply({ embeds: [exampleEmbed] });
 
 			} else {
 				interaction.reply('No data found.');

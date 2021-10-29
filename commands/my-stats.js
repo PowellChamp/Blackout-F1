@@ -60,6 +60,7 @@ module.exports = {
 				const name = interaction.user.tag.split("#");
 				rows.map((row) => {
 					if (row[0] === name[0]) {
+						console.log(row)
 						const exampleEmbed = new MessageEmbed()
 							.setColor('#FFC300')
 							.setTitle(`**${name[0]}'s Stats**`)
