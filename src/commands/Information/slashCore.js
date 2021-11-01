@@ -28,7 +28,10 @@ module.exports = {
 
         const command = require(`./Processes/${interaction.options.getSubcommand()}.js`)
 
-        const standings = await require(`./Processes/getSheets.js`).execute();
-        command.execute(interaction, standings);
+        getSheets = require(`./Processes/getSheets.js`);
+
+        // const standings = getSheets.execute();
+        console.log(getSheets.execute())
+        // command.execute(interaction, standings);
     }
 }

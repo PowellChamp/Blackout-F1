@@ -1,5 +1,3 @@
-const standings = require('./standings');
-
 module.exports = {
     name: 'getSheets',
 
@@ -19,7 +17,7 @@ module.exports = {
         fs.readFile('./src/sheetsData/credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Sheets API.
-        const standings = authorize(JSON.parse(content), listMajors);
+        authorize(JSON.parse(content), listMajors);
         });
 
         async function authorize(credentials, callback) {
@@ -35,7 +33,7 @@ module.exports = {
         });
         }
 
-        async function listMajors(auth) {
+        function listMajors(auth) {
             var standings = {};
             const sheets = google.sheets({version: 'v4', auth});
 
@@ -78,6 +76,7 @@ module.exports = {
                                     });
             
                                     // console.log(standings);
+                                    return standings;
             
                                 } else {
                                     interaction.reply('No data found.');
@@ -89,35 +88,35 @@ module.exports = {
                     }
             });
 
-            sheets.spreadsheets.values.get({
-                spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-                range: 'Constructor Standings!A2:C12',
-                }, (err, res) => {
-                    if (err) return console.log('The API returned an error: ' + err);
-                    const rows = res.data.values;
-                    var constructorStandings = {};
-                    if (rows.length) {
+            // sheets.spreadsheets.values.get({
+            //     spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
+            //     range: 'Constructor Standings!A2:C12',
+            //     }, (err, res) => {
+            //         if (err) return console.log('The API returned an error: ' + err);
+            //         const rows = res.data.values;
+            //         var constructorStandings = {};
+            //         if (rows.length) {
 
-                        rows.map((row) => {
-                            if (row[1] != 'TBA') {
-                                if (row[1].endsWith('*')) {
-                                    row[1] = row[1].slice(0, row[1].length - 1);
-                                }
-                                constructorStandings[row[0]] = [row[1], row[2]];
-                            };
-                        });
+            //             rows.map((row) => {
+            //                 if (row[1] != 'TBA') {
+            //                     if (row[1].endsWith('*')) {
+            //                         row[1] = row[1].slice(0, row[1].length - 1);
+            //                     }
+            //                     constructorStandings[row[0]] = [row[1], row[2]];
+            //                 };
+            //             });
 
-                        // console.log(constructorStandings);
+            //             // console.log(constructorStandings);
 
-                    } else {
-                        interaction.reply('No data found.');
-                    }
-            });
-
-            return standings;
+            //         } else {
+            //             interaction.reply('No data found.');
+            //         }
+            // });
 
         }
 
+        console.log(standings)
         return standings;
+
     },
 }
