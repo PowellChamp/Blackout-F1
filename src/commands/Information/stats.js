@@ -2,23 +2,37 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('myf1stats')
-		.setDescription('Shows your current season stats'),
+		.setName('f1')
+		.setDescription('Shows your current season stats')
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('stats')
+				.setDescription('Shows user stats')
+				.addUserOption(option => option.setName('user').setDescription('The user'))),
+
 	async execute(interaction) {
 		const fs = require('fs');
 		const readline = require('readline');
 		const {google} = require('googleapis');
 		const { MessageEmbed } = require('discord.js');
-		
+
+		const userinfo = interaction.options.getUser('user');
+
+		if (userinfo) {
+			var name = userinfo['username'].split("#")
+		} else {
+			var name = interaction.user.tag.split("#")
+		}
+
 		// If modifying these scopes, delete token.json.
 		const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 		// The file token.json stores the user's access and refresh tokens, and is
 		// created automatically when the authorization flow completes for the first
 		// time.
-		const TOKEN_PATH = 'token.json';
+		const TOKEN_PATH = './src/sheetsData/token.json';
 		
 		// Load client secrets from a local file.
-		fs.readFile('credentials.json', (err, content) => {
+		fs.readFile('./src/sheetsData/credentials.json', (err, content) => {
 		  if (err) return console.log('Error loading client secret file:', err);
 		  // Authorize a client with credentials, then call the Google Sheets API.
 		  authorize(JSON.parse(content), listMajors);
@@ -57,10 +71,12 @@ module.exports = {
 			if (err) return console.log('The API returned an error: ' + err);
 			const rows = res.data.values;
 			if (rows.length) {
-				const name = interaction.user.tag.split("#");
 				rows.map((row) => {
 					if (row[0] === name[0]) {
-						console.log(row)
+						console.log(`
+Retrieving ${name[0]}'s Stats: 
+						`)
+						console.log(row[0], row[1], row[28], row[2])
 						const exampleEmbed = new MessageEmbed()
 							.setColor('#FFC300')
 							.setTitle(`**${name[0]}'s Stats**`)
@@ -74,7 +90,6 @@ module.exports = {
 							.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
 						
 						interaction.reply({ embeds: [exampleEmbed] });
-
 					}
 				});
 			} else {

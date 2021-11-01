@@ -2,9 +2,9 @@
   "name": "learning",
   "version": "1.0.0",
   "description": "Learning how to make discord bots",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node src/main.js"
   },
   "author": "Tom",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.24.0",
     "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
     "googleapis": "^89.0.0"
   }
 }
