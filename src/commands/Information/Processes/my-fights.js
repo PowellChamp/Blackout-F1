@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const standings = require('./standings');
 
 module.exports = {
 	data: new SlashCommandBuilder()
