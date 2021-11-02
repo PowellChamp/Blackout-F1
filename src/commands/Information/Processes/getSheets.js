@@ -1,7 +1,7 @@
 module.exports = {
     name: 'getSheets',
 
-    async execute(interaction) {
+    execute(interaction) {
        const fs = require('fs');
         const readline = require('readline');
         const {google} = require('googleapis');
@@ -17,7 +17,7 @@ module.exports = {
         fs.readFile('./src/sheetsData/credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Sheets API.
-        authorize(JSON.parse(content), listMajors);
+        authorize(JSON.parse(content), createStandings);
         });
 
         async function authorize(credentials, callback) {
@@ -33,7 +33,7 @@ module.exports = {
         });
         }
 
-        function listMajors(auth) {
+        function createStandings(auth) {
             var standings = {};
             const sheets = google.sheets({version: 'v4', auth});
 
@@ -75,8 +75,8 @@ module.exports = {
             
                                     });
             
-                                    // console.log(standings);
-                                    return standings;
+                                    console.log(standings);
+                                    module.exports['standings'] = standings
             
                                 } else {
                                     interaction.reply('No data found.');
@@ -115,8 +115,6 @@ module.exports = {
 
         }
 
-        console.log(standings)
-        return standings;
-
+        console.log(module.exports)
     },
 }
