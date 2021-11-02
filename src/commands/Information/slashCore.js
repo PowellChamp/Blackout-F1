@@ -30,8 +30,8 @@ module.exports = {
 
         getSheets = require(`./Processes/getSheets.js`);
 
-        // const standings = getSheets.execute();
-        console.log(getSheets.execute())
+        const standings = await getSheets.execute();
+        console.log("slashCore standings: " +standings)
         // command.execute(interaction, standings);
     }
 }

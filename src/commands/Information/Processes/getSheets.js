@@ -17,7 +17,7 @@ module.exports = {
         fs.readFile('./src/sheetsData/credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Sheets API.
-        authorize(JSON.parse(content), createStandings);
+        return authorize(JSON.parse(content), createStandings);
         });
 
         async function authorize(credentials, callback) {
@@ -33,13 +33,16 @@ module.exports = {
         });
         }
 
-        function createStandings(auth) {
-            var standings = {};
+        async function createStandings(auth) {
+            console.log("I am creating Standings!")
             const sheets = google.sheets({version: 'v4', auth});
 
-            sheets.spreadsheets.values.get({
+            async function createDict (callback) {
+                console.log("I am creating Dict!")
+                var standings = {}
+                sheets.spreadsheets.values.get({
                 spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-                range: 'Drivers Standings!A2:C33',
+                range: 'Drivers Standings!A2:C',
                 }, (err, res) => {
                     if (err) return console.log('The API returned an error: ' + err);
                     const rows = res.data.values;
@@ -52,47 +55,65 @@ module.exports = {
                                 standings[row[1]] = {position: row[0], points: row[2], team: ''};
                                 
                             };
-
                         });
 
-                        sheets.spreadsheets.values.get({
-                            spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-                            range: 'Drivers/Teams!A3:B',
-                            }, (err, res) => {
-                                if (err) return console.log('The API returned an error: ' + err);
-                                const rows = res.data.values;
-                                if (rows.length) {
-            
-                                    rows.map((row) => {
-                                        if (row[0] != 'TBA') {
-                                            if (row[0].endsWith('*')) {
-                                                row[0] = row[0].slice(0, row[0].length - 1);
-                                            }
-                                            if (row[1].endsWith('*')) {
-                                                row[1] = row[1].slice(0, row[1].length - 1);
-                                            }
-                                            standings[row[0]].team = row[1]
-                                        };
-            
-                                    });
-            
-                                    console.log(standings);
-            
-                                } else {
-                                    interaction.reply('No data found.');
-                                }
-                            
-                        });
+                        console.log("I am the callback");
+
+                        return => {
+                            await callback(standings)
+                        };
+                        
                         
                     } else {
                         interaction.reply('No data found.');
                     }
 
-            });
+                });
+            }
+
+            async function addTeamstoDict (standings) {
+                console.log("I am adding teams to dict!")
+                sheets.spreadsheets.values.get({
+                spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
+                range: 'Drivers/Teams!A3:B',
+                }, (err, res) => {
+                    if (err) return console.log('The API returned an error: ' + err);
+                    const rows = res.data.values;
+                    if (rows.length) {
+
+                        rows.map((row) => {
+                            if (row[0] != 'TBA') {
+                                if (row[0].endsWith('*')) {
+                                    row[0] = row[0].slice(0, row[0].length - 1);
+                                }
+                                if (row[1].endsWith('*')) {
+                                    row[1] = row[1].slice(0, row[1].length - 1);
+                                }
+                                standings[row[0]].team = row[1]
+
+                            };
+
+                        });
+
+                        return standings;
+                        
+                    } else {
+                        interaction.reply('No data found.');
+                    }
+                
+                });
+            }
+
+            async function submit (standings) {
+                console.log("getSheets standings: " +standings)
+            }
+            
+            console.log("I am executing everything!")
+            submit(await createDict(addTeamstoDict))
+           
 
         // console.log(standings)
-        const standings = await createStandings();
-        return standings;
+        // standings = createStandings();
 
             // sheets.spreadsheets.values.get({
             //     spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
