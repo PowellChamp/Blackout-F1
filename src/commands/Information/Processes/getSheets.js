@@ -1,7 +1,7 @@
 module.exports = {
     name: 'getSheets',
 
-    execute(interaction) {
+    async execute(interaction) {
        const fs = require('fs');
         const readline = require('readline');
         const {google} = require('googleapis');
@@ -43,7 +43,6 @@ module.exports = {
                 }, (err, res) => {
                     if (err) return console.log('The API returned an error: ' + err);
                     const rows = res.data.values;
-                    var standings = {}
                     if (rows.length) {
                         rows.map((row) => {
                             if (row[1] != 'TBA') {
@@ -51,7 +50,9 @@ module.exports = {
                                     row[1] = row[1].slice(0, row[1].length - 1);
                                 }
                                 standings[row[1]] = {position: row[0], points: row[2], team: ''};
+                                
                             };
+
                         });
 
                         sheets.spreadsheets.values.get({
@@ -76,17 +77,22 @@ module.exports = {
                                     });
             
                                     console.log(standings);
-                                    module.exports['standings'] = standings
             
                                 } else {
                                     interaction.reply('No data found.');
                                 }
+                            
                         });
-
+                        
                     } else {
                         interaction.reply('No data found.');
                     }
+
             });
+
+        // console.log(standings)
+        const standings = await createStandings();
+        return standings;
 
             // sheets.spreadsheets.values.get({
             //     spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
@@ -114,7 +120,5 @@ module.exports = {
             // });
 
         }
-
-        console.log(module.exports)
     },
 }
