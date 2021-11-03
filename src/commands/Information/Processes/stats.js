@@ -9,10 +9,8 @@ module.exports = {
 		} else {
 			var name = interaction.user.tag.split("#")[0];
 		}
-
-		console.log(name)
-		console.log(Object.keys(standings))
-		if (name in Object.keys(standings) === false) {
+		
+		if (!(Object.keys(standings).includes(name))) {
 			interaction.deleteReply().then(() => interaction.followUp("User not found."))
 			return
 		};

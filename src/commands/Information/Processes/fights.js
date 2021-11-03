@@ -6,16 +6,12 @@ module.exports = {
 		const { MessageEmbed } = require('discord.js');
 
 		const userinfo = interaction.options.getUser('user');
-		console.log(userinfo)
 		if (userinfo) {
 			var name = userinfo['username']
 		} else {
 			var name = interaction.user.tag.split("#")[0];
 		}
 
-		console.log(name)
-
-		console.log(standings)
 		var user_position = 'unknown'
 
 		totalDrivers = 0
@@ -30,16 +26,14 @@ module.exports = {
 				console.log("position: " +user_position) 
 			}
 		}
+
 		if (user_position > 1) {
 			var ahd_position = user_position - 1
-			console.log(ahd_position)
 		} else {
 			var ahd_position = 'N/A'
 		}
-
 		if (user_position < totalDrivers) {
 			var bhnd_position = parseInt(user_position) + 1
-			console.log(bhnd_position)
 		} else {
 			var bhnd_position = 'N/A'
 		}
@@ -62,11 +56,14 @@ module.exports = {
 				}
 			}
 		} else {
-			champ_fight_names.push(`**${key}**`);
-			champ_fight_teams.push(`**${standings[key]['team']}**`);
-			champ_fight_points.push(`**${standings[key]['points']}**`);
+			for (key in standings) {
+				if (standings[key]['position'] == user_position) {
+					champ_fight_names.push(`>>> **${key}**`);
+					champ_fight_teams.push(`>>> **${standings[key]['team']}**`);
+					champ_fight_points.push(`>>> **${standings[key]['points']}**`);
+				}
+			}
 		}
-
 		if (user_position < totalDrivers) {
 			for (key in standings) {
 				if (standings[key]['position'] == bhnd_position) {
@@ -76,10 +73,6 @@ module.exports = {
 				}
 			}
 		}
-
-		// console.log(user_position)
-		// console.log(champ_fight_names)
-		// console.log(champ_fight_points)
 
 		const exampleEmbed = new MessageEmbed()
 			.setColor('#FFC300')

@@ -3,8 +3,6 @@ module.exports = {
 
 	execute(interaction, standings) {
 
-		console.log("standings: " +JSON.stringify(standings));
-
 		const fs = require('fs');
 		const { MessageEmbed } = require('discord.js');
 
@@ -17,9 +15,7 @@ module.exports = {
 			points.push(Object.values(standings)[value]['points'])
 			};
 
-		console.log(`
-Retrieving Standings:
-			`)
+		console.log('Retrieving Standings')
 
 		const exampleEmbed = new MessageEmbed()
 			.setColor('#FFC300')

@@ -8,7 +8,7 @@ module.exports = {
         if (!command) return;
         
         try {
-            interaction.reply("CALCULATING...").then(() => command.execute(interaction, client));
+            interaction.reply("Calculating...").then(() => command.execute(interaction, client));
         } catch (error) {
             console.error(error);
             await interaction.reply({ 

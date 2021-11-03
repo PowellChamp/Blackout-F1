@@ -35,11 +35,9 @@ module.exports = {
         }
 
         function createStandings(auth) {
-            console.log("I am creating Standings!")
             const sheets = google.sheets({version: 'v4', auth});
 
             function createDict (team_callback, callback) {
-                console.log("I am creating Dict!")
                 var standings = {}
                 sheets.spreadsheets.values.get({
                 spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
@@ -58,7 +56,6 @@ module.exports = {
                             };
                         });
 
-                        console.log("I am the callback");
 
                         team_callback(standings, callback);
 
@@ -70,7 +67,6 @@ module.exports = {
             }
 
             function addTeamstoDict (standings, callback) {
-                console.log("I am adding teams to dict!")
                 sheets.spreadsheets.values.get({
                 spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
                 range: 'Drivers/Teams!A3:B',
@@ -92,7 +88,7 @@ module.exports = {
                             };
 
                         });
-                        // console.log(standings);
+
                         callback(standings);
                         
                     } else {
@@ -102,8 +98,6 @@ module.exports = {
                 });
             }
             
-            console.log("I am executing everything!")
-
             createDict(addTeamstoDict, ext_callback);
         }
     },
