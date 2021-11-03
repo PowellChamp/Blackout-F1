@@ -1,7 +1,7 @@
 module.exports = {
     name: 'getSheets',
 
-    async execute(interaction) {
+    execute(interaction) {
        const fs = require('fs');
         const readline = require('readline');
         const {google} = require('googleapis');
@@ -33,11 +33,11 @@ module.exports = {
         });
         }
 
-        async function createStandings(auth) {
+        function createStandings(auth) {
             console.log("I am creating Standings!")
             const sheets = google.sheets({version: 'v4', auth});
 
-            async function createDict (callback) {
+            function createDict (callback) {
                 console.log("I am creating Dict!")
                 var standings = {}
                 sheets.spreadsheets.values.get({
@@ -59,10 +59,12 @@ module.exports = {
 
                         console.log("I am the callback");
 
-                        return => {
-                            await callback(standings)
-                        };
-                        
+                        standings = callback(standings, (standings) => {
+                            console.log(standings);
+                        })
+
+                        console.log("I'm going to scream")
+
                         
                     } else {
                         interaction.reply('No data found.');
@@ -71,7 +73,7 @@ module.exports = {
                 });
             }
 
-            async function addTeamstoDict (standings) {
+            function addTeamstoDict (standings) {
                 console.log("I am adding teams to dict!")
                 sheets.spreadsheets.values.get({
                 spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
@@ -94,7 +96,7 @@ module.exports = {
                             };
 
                         });
-
+                        // console.log(standings);
                         return standings;
                         
                     } else {
@@ -103,14 +105,25 @@ module.exports = {
                 
                 });
             }
-
-            async function submit (standings) {
-                console.log("getSheets standings: " +standings)
-            }
             
             console.log("I am executing everything!")
-            submit(await createDict(addTeamstoDict))
-           
+
+            createDict(addTeamstoDict, (standings) => {
+                console.log("getSheets standings: " +standings)
+                return standings;
+            });
+
+        }
+    },
+}
+
+
+
+
+
+
+
+
 
         // console.log(standings)
         // standings = createStandings();
@@ -139,7 +152,3 @@ module.exports = {
             //             interaction.reply('No data found.');
             //         }
             // });
-
-        }
-    },
-}

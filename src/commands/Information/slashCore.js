@@ -24,14 +24,16 @@ module.exports = {
                 .setName('standings')
                 .setDescription('Shows championship standings')),
 
-	async execute(interaction, client) {
+	async execute(interaction) {
 
         const command = require(`./Processes/${interaction.options.getSubcommand()}.js`)
 
         getSheets = require(`./Processes/getSheets.js`);
 
-        const standings = await getSheets.execute();
-        console.log("slashCore standings: " +standings)
+        await getSheets.execute((standings) => {
+            console.log("slashCore standings: " +standings)
+        });
+        // console.log("slashCore standings: " +standings)
         // command.execute(interaction, standings);
     }
 }
