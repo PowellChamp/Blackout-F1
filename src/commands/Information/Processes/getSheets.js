@@ -1,8 +1,10 @@
+const standings = require('./standings');
+
 module.exports = {
     name: 'getSheets',
 
-    execute(interaction) {
-       const fs = require('fs');
+    execute(interaction, ext_callback) {
+        const fs = require('fs');
         const readline = require('readline');
         const {google} = require('googleapis');
 
@@ -12,32 +14,31 @@ module.exports = {
         // created automatically when the authorization flow completes for the first
         // time.
         const TOKEN_PATH = './src/sheetsData/token.json';
-
         // Load client secrets from a local file.
         fs.readFile('./src/sheetsData/credentials.json', (err, content) => {
-        if (err) return console.log('Error loading client secret file:', err);
-        // Authorize a client with credentials, then call the Google Sheets API.
-        return authorize(JSON.parse(content), createStandings);
+            if (err) return console.log('Error loading client secret file:', err);
+            // Authorize a client with credentials, then call the Google Sheets API.
+            authorize(JSON.parse(content), createStandings);
         });
 
-        async function authorize(credentials, callback) {
-        const {client_secret, client_id, redirect_uris} = credentials.installed;
-        const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[0]);
+        function authorize(credentials, callback) {
+            const {client_secret, client_id, redirect_uris} = credentials.installed;
+            const oAuth2Client = new google.auth.OAuth2(
+                client_id, client_secret, redirect_uris[0]);
 
-        // Check if we have previously stored a token.
-        fs.readFile(TOKEN_PATH, (err, token) => {
-            if (err) return getNewToken(oAuth2Client, callback);
-            oAuth2Client.setCredentials(JSON.parse(token));
-            callback(oAuth2Client);
-        });
+            // Check if we have previously stored a token.
+            fs.readFile(TOKEN_PATH, (err, token) => {
+                if (err) return getNewToken(oAuth2Client, callback);
+                oAuth2Client.setCredentials(JSON.parse(token));
+                callback(oAuth2Client);
+            });
         }
 
         function createStandings(auth) {
             console.log("I am creating Standings!")
             const sheets = google.sheets({version: 'v4', auth});
 
-            function createDict (callback) {
+            function createDict (team_callback, callback) {
                 console.log("I am creating Dict!")
                 var standings = {}
                 sheets.spreadsheets.values.get({
@@ -59,13 +60,8 @@ module.exports = {
 
                         console.log("I am the callback");
 
-                        standings = callback(standings, (standings) => {
-                            console.log(standings);
-                        })
+                        team_callback(standings, callback);
 
-                        console.log("I'm going to scream")
-
-                        
                     } else {
                         interaction.reply('No data found.');
                     }
@@ -73,7 +69,7 @@ module.exports = {
                 });
             }
 
-            function addTeamstoDict (standings) {
+            function addTeamstoDict (standings, callback) {
                 console.log("I am adding teams to dict!")
                 sheets.spreadsheets.values.get({
                 spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
@@ -97,7 +93,7 @@ module.exports = {
 
                         });
                         // console.log(standings);
-                        return standings;
+                        callback(standings);
                         
                     } else {
                         interaction.reply('No data found.');
@@ -108,11 +104,7 @@ module.exports = {
             
             console.log("I am executing everything!")
 
-            createDict(addTeamstoDict, (standings) => {
-                console.log("getSheets standings: " +standings)
-                return standings;
-            });
-
+            createDict(addTeamstoDict, ext_callback);
         }
     },
 }

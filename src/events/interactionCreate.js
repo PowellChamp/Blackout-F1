@@ -8,7 +8,7 @@ module.exports = {
         if (!command) return;
         
         try {
-            await command.execute(interaction, client);
+            interaction.reply("CALCULATING...").then(() => command.execute(interaction, client));
         } catch (error) {
             console.error(error);
             await interaction.reply({ 
@@ -18,3 +18,13 @@ module.exports = {
         };
     },
 }
+
+        // // try {
+        //     interaction.reply("CALCULATING...").then(() => command.execute(interaction, client));
+        // // } catch (error) {
+        //     // console.error(error);
+        //     // await interaction.reply({ 
+        //     //     content: 'There was an error while executing this command!',
+        //     //      ephemeral: true 
+        //     // });
+        // // };
