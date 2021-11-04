@@ -1,5 +1,3 @@
-const standings = require('./standings');
-
 module.exports = {
     name: 'getSheets',
 
