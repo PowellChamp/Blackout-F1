@@ -7,17 +7,14 @@ const guildId = '903333128385495110';
 
 module.exports = (client) => {
 
-    client.handleCommands = async (commandFolders, path) => {
+    client.handleCommands = async (commandFiles, path) => {
         client.commandArray = [];
-        for (folder of commandFolders) {
-            const commandFiles = fs.readdirSync(`${path}/${folder}`).filter(file => file.endsWith('.js'));
-
+    
             for (const file of commandFiles) {
-                const command = require(`../commands/${folder}/${file}`);
+                const command = require(`../commands/${file}`);
                 client.commands.set(command.data.name, command);
                 client.commandArray.push(command.data.toJSON());
             }
-        }
                 
         const rest = new REST({ version: '9' }).setToken('OTAzMzM1MzIyMzg4MTM1OTU2.YXrelA.l1gU3rfRw-DYYES-r2eDop5Z4sU');
 

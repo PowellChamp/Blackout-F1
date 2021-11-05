@@ -1,9 +1,11 @@
 module.exports = {
-	name : 'fights',
-	
+	name: 'fights',
+
 	execute(interaction, standings) {
 
-		const { MessageEmbed } = require('discord.js');
+		const {
+			MessageEmbed
+		} = require('discord.js');
 
 		const userinfo = interaction.options.getUser('user');
 		if (userinfo) {
@@ -16,14 +18,12 @@ module.exports = {
 
 		totalDrivers = 0
 		for (key in standings) {
-			totalDrivers ++
+			totalDrivers++
 		}
 
 		for (key in standings) {
 			if (key === name) {
 				user_position = standings[key]['position']
-				console.log("name: " +name)
-				console.log("position: " +user_position) 
 			}
 		}
 
@@ -45,7 +45,6 @@ module.exports = {
 		if (user_position > 1) {
 			for (key in standings) {
 				if (standings[key]['position'] == ahd_position) {
-					console.log("Ahead: " +standings[key]['position'])
 					champ_fight_names.push(`>>> ${key}`);
 					champ_fight_teams.push(`>>> ${standings[key]['team']}`);
 					champ_fight_points.push(`>>> +${parseInt(standings[key]['points']) - parseInt(standings[name]['points'])}`);
@@ -84,7 +83,11 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
 
-		interaction.deleteReply().then(() => interaction.followUp({ embeds: [exampleEmbed] }))
+		console.log(exampleEmbed)
+
+		interaction.editReply({
+			embeds: [exampleEmbed]
+		})
 
 	},
 };

@@ -4,7 +4,9 @@ module.exports = {
     execute(interaction, ext_callback) {
         const fs = require('fs');
         const readline = require('readline');
-        const {google} = require('googleapis');
+        const {
+            google
+        } = require('googleapis');
 
         // If modifying these scopes, delete token.json.
         const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
@@ -20,7 +22,11 @@ module.exports = {
         });
 
         function authorize(credentials, callback) {
-            const {client_secret, client_id, redirect_uris} = credentials.installed;
+            const {
+                client_secret,
+                client_id,
+                redirect_uris
+            } = credentials.installed;
             const oAuth2Client = new google.auth.OAuth2(
                 client_id, client_secret, redirect_uris[0]);
 
@@ -33,13 +39,16 @@ module.exports = {
         }
 
         function createStandings(auth) {
-            const sheets = google.sheets({version: 'v4', auth});
+            const sheets = google.sheets({
+                version: 'v4',
+                auth
+            });
 
-            function createDict (team_callback, callback) {
+            function createDict(team_callback, callback) {
                 var standings = {}
                 sheets.spreadsheets.values.get({
-                spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-                range: 'Drivers Standings!A2:C',
+                    spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
+                    range: 'Drivers Standings!A2:C',
                 }, (err, res) => {
                     if (err) return console.log('The API returned an error: ' + err);
                     const rows = res.data.values;
@@ -49,8 +58,12 @@ module.exports = {
                                 if (row[1].endsWith('*')) {
                                     row[1] = row[1].slice(0, row[1].length - 1);
                                 }
-                                standings[row[1]] = {position: row[0], points: row[2], team: ''};
-                                
+                                standings[row[1]] = {
+                                    position: row[0],
+                                    points: row[2],
+                                    team: ''
+                                };
+
                             };
                         });
 
@@ -64,10 +77,10 @@ module.exports = {
                 });
             }
 
-            function addTeamstoDict (standings, callback) {
+            function addTeamstoDict(standings, callback) {
                 sheets.spreadsheets.values.get({
-                spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-                range: 'Drivers/Teams!A3:B',
+                    spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
+                    range: 'Drivers/Teams!A3:B',
                 }, (err, res) => {
                     if (err) return console.log('The API returned an error: ' + err);
                     const rows = res.data.values;
@@ -88,51 +101,40 @@ module.exports = {
                         });
 
                         callback(standings);
-                        
+
                     } else {
                         interaction.reply('No data found.');
                     }
-                
+
                 });
             }
-            
+
+            function createConstructors(callback) {
+                sheets.spreadsheets.values.get({
+                    spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
+                    range: 'Constructor Standings!A2:C12',
+                }, (err, res) => {
+                    if (err) return console.log('The API returned an error: ' + err);
+                    const rows = res.data.values;
+                    var constructorStandings = {};
+                    if (rows.length) {
+
+                        rows.map((row) => {
+                            if (row[1] != 'TBA') {
+                                if (row[1].endsWith('*')) {
+                                    row[1] = row[1].slice(0, row[1].length - 1);
+                                }
+                                constructorStandings[row[0]] = [row[1], row[2]];
+                            };
+                        });
+
+                    } else {
+                        interaction.reply('No data found.');
+                    }
+                });
+            }
+
             createDict(addTeamstoDict, ext_callback);
         }
     },
 }
-
-
-
-
-
-
-
-
-
-        // console.log(standings)
-        // standings = createStandings();
-
-            // sheets.spreadsheets.values.get({
-            //     spreadsheetId: '1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw',
-            //     range: 'Constructor Standings!A2:C12',
-            //     }, (err, res) => {
-            //         if (err) return console.log('The API returned an error: ' + err);
-            //         const rows = res.data.values;
-            //         var constructorStandings = {};
-            //         if (rows.length) {
-
-            //             rows.map((row) => {
-            //                 if (row[1] != 'TBA') {
-            //                     if (row[1].endsWith('*')) {
-            //                         row[1] = row[1].slice(0, row[1].length - 1);
-            //                     }
-            //                     constructorStandings[row[0]] = [row[1], row[2]];
-            //                 };
-            //             });
-
-            //             // console.log(constructorStandings);
-
-            //         } else {
-            //             interaction.reply('No data found.');
-            //         }
-            // });

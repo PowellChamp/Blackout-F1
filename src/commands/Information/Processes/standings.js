@@ -4,7 +4,9 @@ module.exports = {
 	execute(interaction, standings) {
 
 		const fs = require('fs');
-		const { MessageEmbed } = require('discord.js');
+		const {
+			MessageEmbed
+		} = require('discord.js');
 
 		const name = interaction.user.tag.split("#");
 
@@ -13,9 +15,7 @@ module.exports = {
 		for (value in Object.values(standings)) {
 			team.push(Object.values(standings)[value]['team'])
 			points.push(Object.values(standings)[value]['points'])
-			};
-
-		console.log('Retrieving Standings')
+		};
 
 		const exampleEmbed = new MessageEmbed()
 			.setColor('#FFC300')
@@ -26,9 +26,12 @@ module.exports = {
 			.addField('Points', points.join('\n'), true)
 			.setTimestamp()
 			.setFooter('Created by Tom', 'https://i.imgur.com/ncL0qpO.png');
-		
-		// interaction.reply({ embeds: [exampleEmbed] })
-		interaction.deleteReply().then(() => interaction.followUp({ embeds: [exampleEmbed] }))
-		
+
+		console.log(exampleEmbed)
+
+		interaction.editReply({
+			embeds: [exampleEmbed]
+		})
+
 	},
 }
