@@ -41,6 +41,9 @@ class get_data:
             if i == []:
                 continue
             if i[0] != "TBA" and i[0] != '':
+                name = i[0]
+                if name.endswith("*"):
+                    name = name.strip("*")
                 wins = 0
                 podiums = 0
                 for r in i[4:]:
@@ -51,15 +54,18 @@ class get_data:
                 finishes = [int(x) for x in finishes if x != 'x']
                 average = round(sum(finishes) / len(finishes))
 
-                driverinfo[i[0]] = {"Team": i[1]}
-                driverinfo[i[0]]['Wins'] = wins
-                driverinfo[i[0]]['Podiums'] = podiums
-                driverinfo[i[0]]['Average'] = average
+                driverinfo[name] = {"Team": i[1]}
+                driverinfo[name]['Wins'] = wins
+                driverinfo[name]['Podiums'] = podiums
+                driverinfo[name]['Average'] = average
 
         # Writes Position
         for i in drivers:
             if i[1] != "TBA":
-                driverinfo[i[1]]['Position'], driverinfo[i[1]]['Points'] = i[0], i[2]
+                name = i[1]
+                if name.endswith("*"):
+                    name = name.strip("*")
+                driverinfo[name]['Position'], driverinfo[name]['Points'] = i[0], i[2]
         # Writes Team Position, Team Points
 
         for i in constructors:
@@ -85,10 +91,13 @@ class get_data:
 
 
         for i in drivertoteam:
+            name = i[0]
+            if name.endswith("*"):
+                name = name.strip("*")
             if i == []:
                 continue
-            if i[0] != "TBA" and i[0] != '':
-                constructorinfo[i[1]]['Drivers'].append(i[0])
+            if name != "TBA" and name != '':
+                constructorinfo[i[1]]['Drivers'].append(name)
                 if i[1] != "Reserve Drivers*":
                     constructorinfo[i[1]]['Livery'] = i[2]
                 else:  constructorinfo[i[1]]['Livery'] = "N/A"

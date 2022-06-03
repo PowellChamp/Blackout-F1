@@ -1,7 +1,8 @@
-from lib2to3.pgen2 import driver
 import discord
 from discord.ext import commands
 from get_data import get_data
+
+import os
 
 bot = commands.Bot(command_prefix='$f1 ')
 data = get_data("1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw")
@@ -89,7 +90,7 @@ async def standings(ctx, *, arg=None):
         ctx.message.author
         
     try: 
-        if arg.lower() in [i.lower() for i in driverinfo.keys()]:
+        if arg.lower() in [i.lower() for i in driverinfo.keys()] or arg.lower() == "me":
             embedVar = driverstats(arg)
         elif arg.lower() == "json":
             jsonDump()
@@ -111,8 +112,6 @@ async def constructors(ctx, *, arg=None):
             Points = []
         
         for name in constructors.keys():
-            if name == "Reserve Drivers*":
-                continue
             constructorStandings.Position.append(constructors[name]['TeamPosition'])
             constructorStandings.Name.append(name)
             constructorStandings.Points.append(constructors[name]['TeamPoints'])
@@ -168,4 +167,4 @@ def driver_info():
     driver_info = data.driver_info()
     return driver_info
 
-bot.run('OTAzMzM1MzIyMzg4MTM1OTU2.GZVIx3.fTEYugaZX3ElvBhV3RneH3HeOG2AAyjrnS8V2w')
+bot.run(os.getenv('TOKEN'))
