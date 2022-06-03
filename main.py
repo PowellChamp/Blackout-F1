@@ -12,7 +12,7 @@ class botData:
         "constructors" : "Displays the current season standings by constructor",
         "stats" : "Displays your stats as well as other driver's"
     }
-    season = "Season 10"
+    season = "Season 8"
 
 @bot.event
 async def on_ready():
