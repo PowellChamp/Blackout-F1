@@ -5,7 +5,7 @@ from get_data import get_data
 import os
 
 bot = commands.Bot(command_prefix='$f1 ')
-data = get_data("1fJmdaoYiMquDwgxFETxv2Ig4A_Qon9lZSsDwnR8malw")
+data = get_data("1VG-vuhv8Z1D_SMjABQvznN9jwqXp1RgwjFWQjXD_iHs")
 
 class botData:
     botCommands = {
