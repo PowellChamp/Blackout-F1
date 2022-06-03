@@ -13,7 +13,7 @@ class botData:
         "standings" : "Displays the current season standings by driver",
         "constructors" : "Displays the current season standings by constructor",
     }
-    season = "Season 8"
+    season = "Season 9"
 
 @bot.event
 async def on_ready():
