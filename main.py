@@ -85,15 +85,10 @@ async def standings(ctx, *, arg=None):
         embedVar.add_field(name="Team's Points", value=driverStats.TeamPoints, inline=True)
         embedVar.set_footer(text="Created by Tom", icon_url="https://i.imgur.com/ncL0qpO.png")
         return embedVar
-    
-    def jsonDump():
-        ctx.message.author
         
     try: 
         if arg.lower() in [i.lower() for i in driverinfo.keys()] or arg.lower() == "me":
             embedVar = driverstats(arg)
-        elif arg.lower() == "json":
-            jsonDump()
         else:
             embedVar = main()
     except:
