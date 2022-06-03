@@ -4,6 +4,10 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from operator import getitem
+from pprint import pprint
+
+
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 class get_data:
@@ -32,24 +36,32 @@ class get_data:
         drivertoteam = self.read("Race Results!A3:AD")
         drivers = self.read("Drivers Standings!A2:C")
         constructors = self.read("Constructor Standings!A2:C")
+        # Writes Team, Wins, Podiums, Average
         for i in drivertoteam:
             if i == []:
                 continue
-            if i[0] != "TBA" or i[0] == '':
-                driverinfo[i[0]] = {"Team": i[1]}
-
+            if i[0] != "TBA" and i[0] != '':
                 wins = 0
                 podiums = 0
                 for r in i[4:]:
                     if r == "x": continue
-                    if int(r) <= 3 & int(r): podiums += 1
+                    if int(r) <= 3: podiums += 1
                     if int(r) == 1: wins += 1
+                finishes = i[4:]
+                finishes = [int(x) for x in finishes if x != 'x']
+                average = round(sum(finishes) / len(finishes))
+
+                driverinfo[i[0]] = {"Team": i[1]}
                 driverinfo[i[0]]['Wins'] = wins
                 driverinfo[i[0]]['Podiums'] = podiums
+                driverinfo[i[0]]['Average'] = average
 
+        # Writes Position
         for i in drivers:
             if i[1] != "TBA":
                 driverinfo[i[1]]['Position'], driverinfo[i[1]]['Points'] = i[0], i[2]
+        # Writes Team Position, Team Points
+
         for i in constructors:
             for d in driverinfo.keys():
                 if i[1] == driverinfo[d]['Team']:
@@ -60,7 +72,41 @@ class get_data:
                     if i[0]:
                         driverinfo[d]['TeamPoints'] = i[2]
 
+        driverinfo = dict(sorted(driverinfo.items(), key=lambda x: int(getitem(x[1], 'Position'))))
         return driverinfo
+
+    def constructor_info(self):
+        constructorinfo = {}
+        drivertoteam = self.read("Drivers/Teams!A3:C")
+        constructors = self.read("Constructor Standings!A2:C")
+
+        # Writes Team, Wins, Podiums, Average
+        constructorinfo = dict((i[1],{"Drivers": []}) for i in drivertoteam if i[0] != "TBA" and i[0] != '')
+
+
+        for i in drivertoteam:
+            if i == []:
+                continue
+            if i[0] != "TBA" and i[0] != '':
+                constructorinfo[i[1]]['Drivers'].append(i[0])
+                if i[1] != "Reserve Drivers*":
+                    constructorinfo[i[1]]['Livery'] = i[2]
+                else:  constructorinfo[i[1]]['Livery'] = "N/A"
+
+        # Writes Team Position, Team Points
+        for i in constructors:
+            for d in constructorinfo.keys():
+                if i[1] == d:
+                    if "TeamPosition" in constructorinfo[d].keys():
+                        continue
+                    else: 
+                        constructorinfo[d]['TeamPosition'] = i[0]
+                    if i[0]:
+                        constructorinfo[d]['TeamPoints'] = i[2]
+
+        constructorinfo = dict(sorted(constructorinfo.items(), key=lambda x: int(getitem(x[1], 'TeamPosition'))))
+        return constructorinfo
+
 
 
 
