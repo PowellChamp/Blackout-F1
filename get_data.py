@@ -98,7 +98,7 @@ class get_data:
                 continue
             if name != "TBA" and name != '':
                 constructorinfo[i[1]]['Drivers'].append(name)
-                if i[1] != "Reserve Drivers*":
+                if "Reserve Drivers" not in i[1] :
                     constructorinfo[i[1]]['Livery'] = i[2]
                 else:  constructorinfo[i[1]]['Livery'] = "N/A"
 
